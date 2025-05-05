@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>logowanie</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <form method="post">
+        email: <input name="email" type="email"><br>
+        hasło: <input name="haslo" type="password"><br>
+        <button id="btn" type="button" >zaloguj</button>
+    </form>
+    <p id="wynik">
+        nie masz jeszcze konta? <a href="rejestracja.html">Zarejestruj się</a>
+    </p>
+</body>
+<script>
+$(document).ready(()=>{
+    $("#btn").click(()=>{
+        $.ajax({
+            url: 'zaloguj.php',
+            type: 'GET',
+            success: function(email){
+                $('#wynik').html(email);
+            },
+            error: function(){
+                $('#wynik').html("upsik");
+            }
+        });
+    });
+});
+</script>
+</html>

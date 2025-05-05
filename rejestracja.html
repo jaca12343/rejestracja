@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <form method="post">
+        email: <input name="email" type="email"><br>
+        hasło: <input name="haslo" type="password"><br>
+        powtórz hasło: <input name="haslo2" type="password"><br>
+        Imię: <input type="text"> Nazwisko: <input type="text"><br>
+        <button id="btn" type="button" >zaloguj</button>
+    </form>
+    <p id="wynik">
+        Masz już konto? <a href="logowanie.html">Zaloguj się</a>
+    </p>
+</body>
+<script>
+$(document).ready(()=>{
+    $("#btn").click(()=>{
+        $.ajax({
+            url: 'zaloguj.php',
+            type: 'GET',
+            success: function(email){
+                $('#wynik').html(email);
+            },
+            error: function(){
+                $('#wynik').html("upsik");
+            }
+        });
+    });
+});
+</script>
+</html>
