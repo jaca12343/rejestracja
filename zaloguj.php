@@ -1,7 +1,5 @@
 <?php
-$email = "essa";
-while(true){
-    echo "essa";
-}
+$email = $_GET['email'];
+
 echo json_encode($email);
 ?>

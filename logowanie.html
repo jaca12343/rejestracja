@@ -8,7 +8,7 @@
 </head>
 <body>
     <form method="post">
-        email: <input name="email" type="email"><br>
+        email: <input id="email" name="email" type="email"><br>
         hasło: <input name="haslo" type="password"><br>
         <button id="btn" type="button" >zaloguj</button>
     </form>
@@ -20,10 +20,10 @@
 $(document).ready(()=>{
     $("#btn").click(()=>{
         $.ajax({
-            url: 'zaloguj.php',
+            url: 'zaloguj.php?email='+$("#email").val(),
             type: 'GET',
             success: function(email){
-                $('#wynik').html(email);
+                console.log(email);
             },
             error: function(){
                 $('#wynik').html("upsik");

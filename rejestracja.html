@@ -12,7 +12,7 @@
         hasło: <input name="haslo" type="password"><br>
         powtórz hasło: <input name="haslo2" type="password"><br>
         Imię: <input type="text"> Nazwisko: <input type="text"><br>
-        <button id="btn" type="button" >zaloguj</button>
+        <button id="btn" type="submit" >zaloguj</button>
     </form>
     <p id="wynik">
         Masz już konto? <a href="logowanie.html">Zaloguj się</a>
@@ -23,7 +23,7 @@ $(document).ready(()=>{
     $("#btn").click(()=>{
         $.ajax({
             url: 'zaloguj.php',
-            type: 'GET',
+            type: 'POST',
             success: function(email){
                 $('#wynik').html(email);
             },
