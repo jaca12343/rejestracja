@@ -4,32 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>logowanie</title>
+    <link rel="stylesheet" type="text/css" href="styl.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
-    <form method="post">
-        email: <input id="email" name="email" type="email"><br>
-        hasło: <input name="haslo" type="password"><br>
-        <button id="btn" type="button" >zaloguj</button>
-    </form>
-    <p id="wynik">
-        nie masz jeszcze konta? <a href="rejestracja.html">Zarejestruj się</a>
-    </p>
+    <div class="glownyDiv">
+        <h1>Logowanie</h1>
+        <form method="post">
+            email: <input id="email" name="email" type="email" required><br>
+            hasło: <input id="password" name="haslo" type="password" required><br>
+            <button id="btn" type="button" >zaloguj</button>
+        </form>
+        <p>
+            nie masz jeszcze konta? <a href="rejestracja.html">Zarejestruj się</a>
+        </p>
+    </div>
 </body>
 <script>
 $(document).ready(()=>{
-    $("#btn").click(()=>{
-        $.ajax({
-            url: 'zaloguj.php?email='+$("#email").val(),
-            type: 'GET',
-            success: function(email){
-                console.log(email);
-            },
-            error: function(){
-                $('#wynik').html("upsik");
+    let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    $("input").on(
+        "focusout", function(){
+            $(this).addClass("clickedInput");
+        }
+    );
+    $("#email").on(
+        "focusout", function(){
+            if(!emailRegex.test($("#email").val())){
+                showError("email", "Podaj prawdziwy adres email");
+            }else{
+                hideError("email");
             }
-        });
+        }
+    );
+    $("#password").on(
+        "focusout", function(){
+            if($("#password").val() == ""){
+                showError("password", "Musisz podać swoje hasło!");
+            }else{
+                hideError("password");
+            }
+        }
+    );
+    $("#btn").click(()=>{
+        if(formValidation() == true){
+            $.ajax({
+                url: 'zaloguj.php',
+                type: 'POST',
+                data: {
+                    email: $("#email").val(),
+                    password: $("#password").val()
+                }
+                ,
+                success: function(data){
+                    $(".errorSpan").remove();
+                    console.log(data);
+                    if(data == 0){
+                        open("index.php", "_self");
+                    }else if(data == -1){
+                        showError("email", "Nie ma takiego użytkownika!");
+                    }else{
+                        showError("password", "Niepoprawna nazwa użytkownika lub hasło");
+                    }
+                },
+                error: function(){
+                    showError("password", "Coś poszło nie tak!");
+                }
+            });
+        }
     });
+    function formValidation(){
+        $(".errorSpan").remove();
+        if($("#password").val() == ""){
+            $("#password").addClass("clickedInput");
+            showError("password", "Musisz podać swoje hasło!");
+            return false;
+        }
+        if(!emailRegex.test($("#email").val())){
+            showError("email", "Podaj prawdziwy adres email");
+            $("#email").addClass("clickedInput");
+            return false;
+        }
+        return true;
+    }
+    function showError(elementid, wiadomosc){
+        hideError(elementid);
+        $("#" + elementid).after("<span class='errorSpan' id='errorSpan" + elementid + "'><br>" + wiadomosc + "</span>");
+    }
+    function hideError(elementid){
+        $("#errorSpan" + elementid ).remove();
+    }
 });
 </script>
 </html>
