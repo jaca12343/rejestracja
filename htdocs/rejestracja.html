@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja</title>
+    <link rel="stylesheet" type="text/css" href="styl.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="glownyDiv">
+        <h1>Rejestracja</h1>
+        <form method="post">
+            email: <input id="email" name="email" type="email" required><br>
+            hasło: <input id="password" name="haslo" type="password" pattern="^(?=.{6,})(?=.*[A-Z])(?=.*[a-z])(?=.*[!-\x2F:-@\x5B-\x60\x7B-~]).*$" required><br>
+            powtórz hasło: <input id="password2" name="haslo2" type="password" required><br>
+            Imię: <input id="imie" type="text" required><br>
+            Nazwisko: <input id="nazwisko" type="text" required ><br>
+            <button id="btn" type="button" >Zarejestruj się</button>
+        </form>
+        <p id="wynik">
+            Masz już konto? <a href="logowanie.html">Zaloguj się</a>
+        </p>
+    </div>
+</body>
+<script>
+    var tab;
+    let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+$(document).ready(()=>{
+    $("input").on(
+        "focusout", function(){
+            $(this).addClass("clickedInput");
+        }
+    );
+    $("#password").on(
+        "focusout", function(){
+            passwordValidator();
+        }
+    );
+    $("#password2").on(
+        "focusout", function(){
+            if($("#password").val() != $("#password2").val()){
+                showError("password2", "Hasła muszą być takie same!");
+            }else{
+                hideError("password2");
+            }
+        }
+    );
+    $("#email").on(
+        "focusout", function(){
+            if(!emailRegex.test($("#email").val())){
+                showError("email", "Podaj prawdziwy adres email");
+            }else{
+                hideError("email");
+            }
+        }
+    );
+    $("#imie").on(
+        "focusout", function(){
+            if($("#imie").val() == ""){
+                showError("imie", "Musisz podać swoje imię!");
+            }else{
+                hideError("imie");
+            }
+        }
+    );
+    $("#nazwisko").on(
+        "focusout", function(){
+            if($("#nazwisko").val() == ""){
+                showError("nazwisko", "Musisz podać swoje nazwisko!");
+            }else{
+                hideError("nazwisko");
+            }
+        }
+    );
+    $("#btn").click(()=>{
+        $("#errorSpan").remove();
+        if(formValidation() == true){
+            $.ajax({
+                url: 'zarejestruj.php',
+                type: 'POST',
+                data: {
+                    email: $("#email").val(),
+                    password: $("#password").val(),
+                    name: $("#imie").val(),
+                    surname: $("#nazwisko").val(),
+                }
+                ,
+                success: function(data){
+                    console.log(data);
+                    tab = JSON.parse(data);
+                    if(tab[0] == 0){
+                        postToPHP();
+                    }else if(tab[0] == -1){
+                        showError("email", tab[1]);
+                    }else if(tab[0] == -2){
+                        showError("password", tab[1]);
+                    }else if(tab[0] == -3){
+                        showError("imie", tab[1]);
+                    }else if(tab[0] == -4){
+                        showError("nazwisko", tab[1]);
+                    }
+                    //console.log(data);
+                },
+                error: function(){
+                    showError("nazwisko", "Nie mamy połączenia z serwerem!");
+                }
+            });
+        }
+    });
+});
+function postToPHP() {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'email_Potwierdzenie.php';
+  
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'email';
+    input.value = $("#email").val();
+  
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+  }
+function formValidation(){
+    if(passwordValidator() == false){
+        $("#password").addClass("clickedInput");
+        return false;
+    }
+    if($("#password").val() != $("#password2").val()){
+        showError("password2", "Hasła muszą być takie same!");
+        $("#password2").addClass("clickedInput");
+        return false;
+    }
+    if($("#imie").val()==""){
+        showError("imie", "Musisz podać swoje imię!");
+        $("#imie").addClass("clickedInput");
+        return false;
+    }
+    if($("#nazwisko").val()==""){
+        showError("nazwisko", "Musisz podać swoje nazwisko!");
+        $("#nazwisko").addClass("clickedInput");
+        return false;
+    }
+    return true;
+}
+function showError(elementid, wiadomosc){
+    hideError(elementid);
+    $("#" + elementid).after("<span class='errorSpan' id='errorSpan" + elementid + "'><br>" + wiadomosc + "</span>");
+}
+function hideError(elementid){
+    $("#errorSpan" + elementid ).remove();
+}
+function passwordValidator(){
+    let lengthRegex = /.{6,}/;
+    let bigLeterRegex = /.*[A-Z]+.*/;
+    let smallLeterRegex = /.*[a-z]+.*/;
+    let specialCharacterRegex = /.*[!-\x2F:-@\x5B-\x60\x7B-~]+.*/;
+    let password = $("#password").val();
+    $("#password2").attr("pattern",$("#password").val());
+    $(".errorSpan").remove();
+    if(lengthRegex.test(password) == false){
+        showError("password", "hasło musi mieć co najmniej 6 znaków");
+        return false;
+    }else if(bigLeterRegex.test(password) == false){
+        showError("password", "hasło musi mieć co najmniej jedną dużą literę");
+        return false;
+    }else if(smallLeterRegex.test(password) == false){
+        showError("password", "hasło musi mieć co najmniej jedną małą literę");
+        return false;
+    }else if(specialCharacterRegex.test(password) == false){
+        showError("password", "hasło musi mieć co najmniej jeden znak specjalnych");
+        return false;
+    }else{
+        return true;
+    }
+}
+</script>
+</html>
