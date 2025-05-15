@@ -31,6 +31,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'logout') {
 <?php
     if(isset($_SESSION["login_email"])){
         $email = $_SESSION["login_email"];
+        if($email == "Admin@admin.ad"){
+            echo "<script> window.open('admin.php', '_self');</script>";
+            return;
+        }
         echo "<script> $(`#niezalogowany`).after(`<div class='glownyDiv'><h1 id='header'>Brawo udało ci się zalogować!</h1></div>`);   $('#niezalogowany').remove(); </script>";
         $db = Database::getInstance();
         $conn = $db->conn;
