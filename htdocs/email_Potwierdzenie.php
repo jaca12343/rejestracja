@@ -1,6 +1,6 @@
 <?php
     include_once __DIR__ . '/../vendor/autoload.php';
-    include_once __DIR__ . '/databaseConnection.php';
+    include_once __DIR__ . '/php/databaseConnection.php';
     session_start();
     $db = Database::getInstance();
     $conn = $db->conn;
@@ -36,7 +36,7 @@ $(document).ready(()=>{
 });
 function sendEmail(resend){
     $.ajax({
-        url: 'mail.php',
+        url: '/htdocs/php/mail.php',
         type: 'POST',
         data: {
             email: '<?php echo $email;?>',

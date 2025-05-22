@@ -22,3 +22,47 @@ form{
     width: 350px;
     margin:auto;
 }
+th, td{
+    border: 1px solid black;
+    padding: 2px;
+}
+table{
+    border-collapse: collapse;
+    margin: auto;
+    display:inline-block;
+}
+#listaUzytkownikow{
+    border-radius: 20px;
+    padding: 10px;
+    margin: auto;
+    width: 900px;
+    text-align: center;
+    background-color: rgb(227, 227, 227);
+}
+.zarejestrowany{
+    background-color: rgb(220, 255, 202);
+}
+.niezarejestrowany{
+    background-color: rgb(255, 220, 220);
+}
+#filtry{
+    display:inline;
+    float: left;
+    vertical-align: top;
+    width: 150px;
+}
+h4{
+    margin-bottom: 0px;
+}
+.sortButton{
+    width: 20px;
+    height: 20px;
+    background-size: cover;
+    background-color: transparent;
+    border: none;
+}
+footer{
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+}

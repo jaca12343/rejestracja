@@ -1,3 +1,8 @@
+<?php
+
+include_once __DIR__ . '/../vendor/autoload.php';
+include_once __DIR__ . '/php/databaseConnection.php';
+?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>

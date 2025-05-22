@@ -1,12 +1,12 @@
 <?php
-include_once __DIR__ . '/../vendor/autoload.php';
+include_once __DIR__ . '/../../vendor/autoload.php';
 class Database{
     private static $instance =null;
     public $conn;
     
     //konstruktor
     private function __construct(){
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
         $dotenv -> load();
         $host = $_ENV["DB_HOST"];
         $user = $_ENV["DB_USER"];

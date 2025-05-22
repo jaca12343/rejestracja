@@ -49,7 +49,7 @@ $(document).ready(()=>{
     $("#btn").click(()=>{
         if(formValidation() == true){
             $.ajax({
-                url: 'zaloguj.php',
+                url: '/htdocs/php/zaloguj.php',
                 type: 'POST',
                 data: {
                     email: $("#email").val(),

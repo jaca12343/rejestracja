@@ -1,6 +1,6 @@
 <?php
 include_once __DIR__ . '/../vendor/autoload.php';
-include_once __DIR__ . '/databaseConnection.php';
+include_once __DIR__ . '/php/databaseConnection.php';
 
 session_start();
 
@@ -91,7 +91,7 @@ $(document).ready(()=>{
                 var changed = false;
                 if(!(initdata.imie == $("#imie").val() && initdata.nazwisko == $("#nazwisko").val())){
                     $.ajax({
-                        url: "zmienDane.php", // same file
+                        url: "/htdocs/php/zmienDane.php", // same file
                         type: "POST",
                         data: { 
                             imie: $("#imie").val(),
