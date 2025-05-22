@@ -54,6 +54,13 @@ if (isset($_POST['action']) && $_POST['action'] === 'logout') {
                 <option value=1 style="background-color:rgb(220, 255, 202);">zarejestrowani</option>
                 <option value=2 style="background-color:rgb(255, 220, 220);">niezarejestrowani</option>
             </select>
+            email:
+            <input id="filtrEmail" title="jaki ciąg znaków musi być w emailu">
+            </input>
+            <br>
+            <br>
+            <br>
+            des
         </div>
         <table id="UzytkownicyOl">
 
@@ -159,6 +166,12 @@ $(document).ready(()=>{
         $("#usunbtn").click(()=>{
             deleteUsers();
         });
+        $("#filtrEmail").on(
+            "keydown", function(){
+                setTimeout(function(){
+                    applyFilters();
+                }, 100);
+        })
     }
 });
 function getData(){
@@ -196,6 +209,7 @@ function changePages(page){
 }
 function applyFilters(){
     $("#filtrZarejestrowany").css("background-color", $("#filtrZarejestrowany").find(":selected").css("background-color"));
+    //sprawdzanie czy użytkownik jest zarejestrowany
     switch($("#filtrZarejestrowany").find(":selected").val()){
 
         case '1':
@@ -222,6 +236,18 @@ function applyFilters(){
             //console.log(usersData);
             //console.log(dataBeforeFilters);
             break;
+    }
+    //wyszukiwanie emaila
+    let emailSearch = $("#filtrEmail").val();
+    if(emailSearch != ""){
+        let emailPattern = new RegExp(emailSearch, "gi");
+        let tempArray = usersData;
+        usersData = [];
+        tempArray.forEach(element => {
+            if(emailPattern.test(element['email'])){
+                usersData.push(element);
+            }
+        });
     }
     configurePages();
     showRecords();

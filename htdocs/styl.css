@@ -39,6 +39,11 @@ table{
     text-align: center;
     background-color: rgb(227, 227, 227);
 }
+#listaUzytkownikow::after{
+    content: "";
+    display: table;
+    clear: both;
+}
 .zarejestrowany{
     background-color: rgb(220, 255, 202);
 }
@@ -47,9 +52,9 @@ table{
 }
 #filtry{
     display:inline;
-    float: left;
     vertical-align: top;
     width: 150px;
+    float: left;
 }
 h4{
     margin-bottom: 0px;
@@ -65,6 +70,9 @@ h4{
     width: 30px;
     height: 30px;
     background-size: cover;
+    background-color: transparent;
+    position: relative;
+    top: 10px;
     background-image: url('images/reload2.png');
     border: none;
 }
