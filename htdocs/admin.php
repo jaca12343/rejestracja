@@ -45,6 +45,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'logout') {
                 <option>20</option>
                 <option>25</option>
             </select>
+            <button id="refreshButton" onclick="getData()"></button>
         </h2>
         <div id="filtry">
             <h4>Filtry:</h4>

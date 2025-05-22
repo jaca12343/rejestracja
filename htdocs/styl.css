@@ -61,6 +61,13 @@ h4{
     background-color: transparent;
     border: none;
 }
+#refreshButton{
+    width: 30px;
+    height: 30px;
+    background-size: cover;
+    background-image: url('images/reload2.png');
+    border: none;
+}
 footer{
     position: absolute;
     width: 100%;
