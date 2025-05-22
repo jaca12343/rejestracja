@@ -17,8 +17,6 @@
         while ($row = $result->fetch_assoc()) {
             echo ",".json_encode($row);  // Push each row into the array
         }
-    } else {
-        echo "upsik";
     }
 
     $result = mysqli_query($conn,"SELECT * FROM rejestrowani_uzytkownicy");
@@ -26,8 +24,6 @@
         while ($row = $result->fetch_assoc()) {
             echo ",".json_encode($row);  // Push each row into the array
         }
-    } else {
-        echo "upsik";
     }
     echo "]";
 ?>

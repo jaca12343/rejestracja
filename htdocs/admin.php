@@ -25,14 +25,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'logout') {
 </head>
 <body>
     <nav>
-        <button id='showUsersBtn'>Wyświetl użytkowników</button><br>
-        <button id='removeUsersBtn'>Usunąć niezarejestrowanych użytkowników?</button><br>
         <button id="logoutBtn">wyloguj się</button>
+        <button id='removeUsersBtn'>Usunąć niezarejestrowanych użytkowników?</button>
     </nav>
-    <div class='glownyDiv'>
-        <h1 id='header'>Witamy na stronie Administratora!</h1>
-    </div>
-    <div id="listaUzytkownikow" style="display: none;">
+    <div id="listaUzytkownikow">
         <h1>Użytkownicy</h1>
         <h2>strona: 
             <select id="selectStrona">
@@ -57,10 +53,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'logout') {
             email:
             <input id="filtrEmail" title="jaki ciąg znaków musi być w emailu">
             </input>
-            <br>
-            <br>
-            <br>
-            des
         </div>
         <table id="UzytkownicyOl">
 
@@ -119,9 +111,7 @@ $(document).ready(()=>{
         initdata = JSON.parse(`<?php echo json_encode($dane); ?>`);
         var wysylac = false;
 
-        $("#showUsersBtn").click(()=>{
-            getData();
-        });
+        getData();
 
         $("#removeUsersBtn").click(()=>{
             $.ajax({
@@ -176,7 +166,7 @@ $(document).ready(()=>{
 });
 function getData(){
     $.ajax({
-        url: "/htdocs/php/wybierzUzytkownikow.php", // same file
+        url: "/htdocs/php/wybierzUzytkownikow.php",
         type: "POST",
         data: {},
         success: function(data) {
@@ -185,6 +175,10 @@ function getData(){
             
             showRecords();
             configurePages();
+        },
+        error: function(e){
+            alert("coś poszło nie tak");
+            console.log(e);
         }
     });
 }
