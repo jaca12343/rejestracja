@@ -31,9 +31,14 @@ if (isset($_POST['action']) && $_POST['action'] === 'logout') {
     <div id="listaUzytkownikow">
         <h1>Użytkownicy</h1>
         <h2>strona: 
+            <button id="backwardDouble" title="pójdź 5 stron do tyłu"></button>
+            <button id="backwardSingle" title="pójdź 1 stronę do tyłu"></button>
             <select id="selectStrona">
             </select> 
+            <button id="forwardSingle" title="pójdź 1 stronę do przodu"></button>
+            <button id="forwardDouble" title="pójdź 5 stron do przodu"></button>
             uzytkownicy na stronę: 
+
             <select id="linieNaStrone">
                 <option>5</option>
                 <option selected>10</option>
@@ -41,8 +46,9 @@ if (isset($_POST['action']) && $_POST['action'] === 'logout') {
                 <option>20</option>
                 <option>25</option>
             </select>
+            
             <button id="refreshButton" onclick="getData()"></button>
-        </h2>
+</h2>
         <div id="filtry">
             <h4>Filtry:</h4>
             status:<select id="filtrZarejestrowany">
@@ -91,7 +97,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'logout') {
     var currentPage = 0;
     var checkboxes = new Array();
     var lastSorted;
-    var sortLevel;
+    var sortLevel = 0;
     function przejdzDoLogowania(){
         window.open('logowanie.html', '_self');
     }
@@ -110,20 +116,21 @@ $(document).ready(()=>{
     if($("#niezalogowany").length == 0){
         initdata = JSON.parse(`<?php echo json_encode($dane); ?>`);
         var wysylac = false;
-
         getData();
 
         $("#removeUsersBtn").click(()=>{
-            $.ajax({
-                url: "/htdocs/php/usunUzytkownikow.php",
-                type: "GET",
-                success: function(data){
-                    alert("Usunięto niezarejestrowanych użytkowników");
-                },
-                error: function(){
-                    alert("Coś poszło nie tak");
-                }
-            });
+            if(confirm("czy na pewno chcesz usunąć niezarejestrowanych użytkowników?")){
+                $.ajax({
+                    url: "/htdocs/php/usunUzytkownikow.php",
+                    type: "GET",
+                    success: function(data){
+                        alert("Usunięto niezarejestrowanych użytkowników");
+                    },
+                    error: function(){
+                        alert("Coś poszło nie tak");
+                    }
+                });
+            }
         });
         $("#logoutBtn").click(()=>{
             $.ajax({
@@ -161,7 +168,19 @@ $(document).ready(()=>{
                 setTimeout(function(){
                     applyFilters();
                 }, 100);
-        })
+        });
+        $("#forwardSingle").click(function(){
+            changePages(currentPage + 1);
+        });
+        $("#forwardDouble").click(function(){
+            changePages(currentPage + 5);
+        });
+        $("#backwardSingle").click(function(){
+            changePages(currentPage - 1);
+        });
+        $("#backwardDouble").click(function(){
+            changePages(currentPage - 5);
+        });
     }
 });
 function getData(){
@@ -173,7 +192,7 @@ function getData(){
             dataBeforeFilters = data;
             usersData = dataBeforeFilters.map(obj => ({ ...obj }));
             
-            showRecords();
+            applyFilters();
             configurePages();
         },
         error: function(e){
@@ -184,6 +203,7 @@ function getData(){
 }
 function configurePages(){
     $("#selectStrona").children().remove();
+    //ustawianie bierzacej strony, na ta, ktora wczesniej byla zaznaczona lub na 1 
     for(let i = 0; i < usersData.length / linesPerPage; i++){
         $("#selectStrona").append(`<option>${i+1}</option>`);
         if(i == currentPage)
@@ -191,6 +211,7 @@ function configurePages(){
     }
     if($("#selectStrona option").first().prop("selected") == true){
         currentPage = 0;
+        changePages(0);
     }
     $("#selectStrona").change(function(){
         var value = $(this).find("option:selected").text() - 1;
@@ -199,6 +220,31 @@ function configurePages(){
 }
 function changePages(page){
     currentPage = page;
+    //sprawdzanie czy numer strony ma jakis sens
+    if(currentPage < 0)
+        currentPage = 0;
+    if(currentPage > $("#selectStrona option").length - 1)
+        currentPage = $("#selectStrona option").length - 1
+    $("#selectStrona option").eq(currentPage).prop('selected', true);
+
+    //sprawdzanie czy mozna isc w prawo
+    if($("#selectStrona option").length > 1 && currentPage < $("#selectStrona option").length - 1){
+        $("#forwardSingle").css("display", "inline-block");
+        $("#forwardDouble").css("display", "inline-block");
+    }else{
+        $("#forwardSingle").css("display", "none");
+        $("#forwardDouble").css("display", "none");
+    }
+    //sprawdzanie czy mozna isc w lewo
+    if( currentPage > 0){
+        $("#backwardSingle").css("display", "inline-block");
+        $("#backwardDouble").css("display", "inline-block");
+    }else{
+        $("#backwardSingle").css("display", "none");
+        $("#backwardDouble").css("display", "none");
+    }
+
+
     showRecords();
 }
 function applyFilters(){
@@ -242,6 +288,14 @@ function applyFilters(){
                 usersData.push(element);
             }
         });
+    }
+    //używanie sortowania
+    if(sortLevel == 1){
+        callSorting(lastSorted, true);
+    }else if(sortLevel == 2){
+        callSorting(lastSorted, false);
+    }else{
+        sortLevel = 0;
     }
     configurePages();
     showRecords();
@@ -429,10 +483,13 @@ function showRecords(){
     $(".glownyDiv").css("display", "none")
     $("#listaUzytkownikow").css("display","block");
     var trClass;
+    //wyswietlanie uzytkownikow
     for(let i = currentPage * linesPerPage; i < (currentPage + 1) * linesPerPage; i++){
+        //przerwij, gdy juz wszyscy wyswietleni
         if(i >= usersData.length){
             break;
         }
+        //nadawanie zielonego koloru zarejestrowanym uzytkownikom, a czerwonego niezarejestrowanym
         if(usersData[i]["kod_weryfikacyjny"] == null){
             trClass = "zarejestrowany";
             cBoxId = "z";
@@ -440,10 +497,12 @@ function showRecords(){
             trClass = "niezarejestrowany";
             cBoxId = "n";
         }
-        $("#UzytkownicyOl").append(`<tr class='${trClass}'><td><input type="checkbox" id="checkbox_${cBoxId}${usersData[i]["id"]}"> ${i}:</td></tr>`);
+        //numerowanie komorek
+        $("#UzytkownicyOl").append(`<tr class='${trClass}'><td><input type="checkbox" id="checkbox_${cBoxId}${usersData[i]["id"]}"> ${i+1}:</td></tr>`);
         for(let j = 0; j < kolumnyJS.length; j++){
             $("#UzytkownicyOl").children().last().append(`<td>${usersData[i][kolumnyJS[j]]}</td>`);
         }
+        //zaznaczenie checkboxa, jesli jest na liscie
         if(checkboxes.includes(`checkbox_${cBoxId}${usersData[i]["id"]}`)){
             document.getElementById(`checkbox_${cBoxId}${usersData[i]["id"]}`).checked = true;
         }
